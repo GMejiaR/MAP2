@@ -4,44 +4,32 @@ from itertools import chain, islice
 from inspect import signature
 from operator import add
  
+
+def impresion(n):
+
+  f = zipWith(add)
+  g = flip(f)
+
+  def weave(xs):
+      return bind([xs,[' ' * len(s) for s in xs],xs])(compose(g(xs))(f(xs)))
+  return index(
+      iterate(weave)(['▓▓'])
+  )(n)
  
-# sierpinskiCarpet :: Int -> [String]
-def sierpinskiCarpet(n):
-    '''A string representing the nth
-       iteration of a Sierpinski carpet.
-    '''
-    f = zipWith(add)
-    g = flip(f)
- 
-    # weave :: [String] -> [String]
-    def weave(xs):
-        return bind([
-            xs,
-            [' ' * len(s) for s in xs],
-            xs
-        ])(compose(g(xs))(f(xs)))
- 
-    return index(
-        iterate(weave)(['▓▓'])
-    )(n)
- 
- 
-# TEST ----------------------------------------------------
+
 def main():
     '''Test iteration of the Sierpinski carpet'''
- 
-    levels = enumFromTo(0)(3)
-    t = ' ' * (
-        len(' -> ') +
-        max(map(compose(len)(str), levels))
-    )
-    print(
-        fTable(__doc__ + ':')(lambda x: '\n' + str(x))(
-            lambda xs: xs[0] + '\n' + (
-                unlines(map(lambda x: t + x, xs[1:])))
-        )
-        (sierpinskiCarpet)(levels)
-    )
+    print()
+    print("---------------------------------------")
+    print("          Implementación extra")
+    print("---------------------------------------")
+    print()
+    print("Ingrese el número de iteraciones: ")
+    numero = int(input("(RECOMENDACIÓN: n <= 4): "))
+    levels = enumFromTo(0)(numero-1)
+  
+    t = ' ' * (len(' -> ') + max(map(compose(len)(str), levels)))
+    print(fTable(__doc__ + ':')(lambda x: '\n' + str(x))(lambda xs: xs[0] + '\n' + (unlines(map(lambda x: t + x, xs[1:]))))(impresion)(levels))
  
  
 # GENERIC -------------------------------------------------
