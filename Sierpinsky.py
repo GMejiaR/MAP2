@@ -1,56 +1,57 @@
 '''Implementacion de "Sierpinski Carpet"'''
- 
 from itertools import chain, islice
 from inspect import signature
 from operator import add
+
+
  
 
 def impresion(n):
 
-  f = zipWith(add)
-  g = flip(f)
+  f = unir(add)
+  g = reversa(f)
 
-  def weave(xs):
-      return bind([xs,[' ' * len(s) for s in xs],xs])(compose(g(xs))(f(xs)))
-  return index(iterate(weave)(['▓▓']))(n)
+  def patron(xs):
+      return secuencia([xs,[' ' * len(s) for s in xs],xs])(construir(g(xs))(f(xs)))
+    
+  return valorN(iteracion(patron)(['▓▓']))(n)
  
 
 def main():
-    print()
-    print("---------------------------------------")
-    print("          Implementación extra")
-    print("---------------------------------------")
-    print()
-    print("Ingrese el número de iteraciones: ")
-    numero = int(input("(RECOMENDACIÓN: n <= 4): "))
-    levels = enumFromTo(0)(numero-1)
-  
-    t = ' ' * (len(' -> ') + max(map(compose(len)(str), levels)))
-    print(formatoIm(__doc__ + ':')(lambda x: '\n' + str(x))(lambda xs: xs[0] + '\n' + (unlines(map(lambda x: t + x, xs[1:]))))(impresion)(levels))
+  print()
+  print("---------------------------------------")
+  print("          Implementación extra")
+  print("---------------------------------------")
+  print()
+  print("Ingrese el número de iteraciones: ")
+  numero = int(input("(RECOMENDACIÓN: n <= 4): "))
+  print()
+  print()
+  levels = numIte(0)(numero-1)
+
+  t = ' ' * (len(' -> ') + max(map(construir(len)(str), levels)))
+  print(formatoIm(__doc__ + ':')(lambda x: '\n' + str(x))(lambda xs: xs[0] + '\n' + (intercalar(map(lambda x: t + x, xs[1:]))))(impresion)(levels))
  
  
 # GENERIC -------------------------------------------------
  
-# bind (>>=) :: [a] -> (a -> [b]) -> [b]
-def bind(xs):
-    '''List monad injection operator.
-       Two computations sequentially composed,
-       with any value produced by the first
-       passed as an argument to the second.'''
-    return lambda f: list(chain.from_iterable(map(f, xs)))
+# secuencia (>>=) :: [a] -> (a -> [b]) -> [b]
+def secuencia(xs):
+  res = lambda f: list(chain.from_iterable(map(f, xs)))
+  return res
  
-# compose (<<<) :: (b -> c) -> (a -> b) -> a -> c
-def compose(g):
+# construir (<<<) :: (b -> c) -> (a -> b) -> a -> c
+def construir(g):
     '''Right to left function composition.'''
     return lambda f: lambda x: g(f(x))
  
-# enumFromTo :: (Int, Int) -> [Int]
-def enumFromTo(m):
+# numIte :: (Int, Int) -> [Int]
+def numIte(m):
     '''Integer enumeration from m to n.'''
     return lambda n: list(range(m, 1 + n))
  
-# flip :: (a -> b -> c) -> b -> a -> c
-def flip(f):
+# reversa :: (a -> b -> c) -> b -> a -> c
+def reversa(f):
     '''The (curried or uncurried) function f with its
        arguments reversed.'''
     if 1 < len(signature(f).parameters):
@@ -58,13 +59,13 @@ def flip(f):
     else:
         return lambda a: lambda b: f(b)(a)
  
-# index (!!) :: [a] -> Int -> a
-def index(xs):
-    '''Item at given (zero-based) index.'''
+# valorN (!!) :: [a] -> Int -> a
+def valorN(xs):
+    '''Item at given (zero-based) valorN.'''
     return lambda n: None if 0 > n else (xs[n] if (hasattr(xs, "__getitem__")) else next(islice(xs, n, None)))
  
-# iterate :: (a -> a) -> a -> Gen [a]
-def iterate(f):
+# iteracion :: (a -> a) -> a -> Gen [a]
+def iteracion(f):
     '''An infinite list of repeated
        applications of f to x.
     '''
@@ -75,14 +76,14 @@ def iterate(f):
             v = f(v)
     return lambda x: go(x)
  
-# unlines :: [String] -> String
-def unlines(xs):
+# intercalar :: [String] -> String
+def intercalar(xs):
     '''A single string derived by the intercalation
        of a list of strings with the newline character.'''
     return '\n'.join(xs)
  
-# zipWith :: (a -> b -> c) -> [a] -> [b] -> [c]
-def zipWith(f):
+# unir :: (a -> b -> c) -> [a] -> [b] -> [c]
+def unir(f):
     '''A list constructed by zipping with a
        custom function, rather than with the
        default tuple constructor.'''
